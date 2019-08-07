@@ -92,11 +92,6 @@ class StartPage(tk.Frame):
         self.d_time = tk.Label(self.infoFrame,bg='white smoke',text='',font=detailFont)
         self.d_time.grid(row=4,column=2,columnspan=2,sticky="w")
 
-        
-        self.p_name['text'] = ''
-        self.d_name['text'] = ''
-        self.d_date['text'] = ''
-
         tk.Label(self.infoFrame,bg='white smoke',width=10,height=12).grid(row=5,column=0)
         tk.Label(self.infoFrame,bg='white smoke',width=10,height=0).grid(row=6,column=0)
 
@@ -136,6 +131,10 @@ class StartPage(tk.Frame):
             self.d_date['text'] = p_info[3]
             self.d_time['text'] = p_info[4]
         except:
+            self.p_name['text'] = ''
+            self.d_name['text'] = ''
+            self.d_date['text'] = ''
+            self.d_time['text'] = ''
             showwarning("No Information","The selected file doesn't contain any patient related information")
         
         self.selectFrame.grid_remove()
