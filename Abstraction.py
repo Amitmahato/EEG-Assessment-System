@@ -15,6 +15,7 @@ class Abstraction:
         self.color = []
         self.bad = []
         self.powers = []
+        self.channelName = []
         self.eegLength = 0
         self.r = 0
         self.filePath = filePath
@@ -27,6 +28,7 @@ class Abstraction:
         p.assess_func()
         self.result = p.result_data
         self.data = p.raw_data
+        self.channelName = p.header
         self.eegLength = len(p.raw_data)/256
         self.bad = p.bad
         self.powers = p.powers
