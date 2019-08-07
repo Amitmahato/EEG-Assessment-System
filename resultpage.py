@@ -24,14 +24,15 @@ class Results(tk.Frame):
         self.channelList.grid(row=0,column=0)
         
         processedData = args[0]
+        self.channelName = processedData.channelName
         self.channelStatus = processedData.result
 
         self.channelList.delete(0,"end")
         for i in range(32):
             if(i<10):
-                self.channelList.insert(i,"     Channel    {}      :    {}".format(i,self.channelStatus[i]))
+                self.channelList.insert(i,"     Channel    {}   :   {}".format(self.channelName[i],self.channelStatus[i]))
             else:
-                self.channelList.insert(i,"     Channel    {}    :    {}".format(i,self.channelStatus[i]))
+                self.channelList.insert(i,"     Channel    {}   :   {}".format(self.channelName[i],self.channelStatus[i]))
 
         self.scrollBar = tk.Scrollbar(body,width=12)
         self.scrollBar.grid(row = 0, column=1)
