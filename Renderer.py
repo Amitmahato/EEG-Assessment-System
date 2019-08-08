@@ -1,9 +1,10 @@
 import pygame
-from pygame.locals import DOUBLEBUF, OPENGL
+from pygame.locals import *
 # from OpenGL.GL import glPointSize, GL_TRIANGLES, GL_POINTS, glVertex3fv, glColor3fv, glRotatef, glTranslatef, glBegin, glEnable, glEnd, glClear, GL_DEPTH_TEST, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 from Objloader import Objloader
+from Textwriter import  drawText
 
 
 class Renderer:
@@ -57,12 +58,7 @@ class Renderer:
             glColor3fv([1.0, 0.1, 0.2])
             glVertex3fv([i*1.01 for i in self.vertices[vertex]])
         glEnd()
-    
-    def drawText(self, font, position, textString,color):     
-        textSurface = font.render(textString, True, color, (0,0,0,255))     
-        textData = pygame.image.tostring(textSurface, "RGBA", True)     
-        glRasterPos3d(*position)     
-        glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
+
 
     def render(self):
         limit = len(self.color)
@@ -80,9 +76,8 @@ class Renderer:
         pygame.display.set_caption('3D Renderer')
         gluPerspective(45, 4/3, 0.1, 50.0)
         now = []
+        font = pygame.font.Font('data/fonty.ttf', 24)
 
-        font = pygame.font.Font('data/fonty.ttf', 24) 
-        
 
         glTranslatef(0.0, 0.0, -5)
         glRotatef(0, 0, 0, 0)
@@ -91,8 +86,7 @@ class Renderer:
         color_len = len(self.color[0])
         diff = []
         for i in range(color_len):
-            diff.append((self.color[(m+1) % limit]
-                         [i] - self.color[m][i]) / speed)
+            diff.append((self.color[(m+1) % limit][i] - self.color[m][i]) / speed)
 
         while True:
 
@@ -103,11 +97,16 @@ class Renderer:
                 if event.type == pygame.KEYDOWN:
                     if pygame.key.get_focused() and pygame.key.get_pressed()[K_SPACE]:
                         is_paused = not is_paused
+                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_LEFT]:        
+                            glRotatef(1, 0,1, 0)
+                    
+                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_RIGHT]:        
+                                glRotatef(1, 0, -1, 0)
 
-                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_GREATER]:
+                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_d]:
                         if speed > 5:
                             speed -= 5
-                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_LESS]:
+                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_a]:
                         speed += 5
                     if pygame.key.get_focused() and pygame.key.get_pressed()[K_n]:
                         show_head = not show_head
@@ -135,21 +134,23 @@ class Renderer:
             if not is_paused:
                 ind += 1
                 if ind % speed == 0 and m < limit - 1:
+                    diff = []
                     ind = 0
                     m = (m+1) % limit
                     for i in range(color_len):
-                        diff.append(
-                            (self.color[(m+1) % limit][i] - self.color[m][i]) / speed)
+                        diff.append((self.color[(m+1) % limit][i] - self.color[m][i]) / speed)
                 col = [self.color[m][i] + (diff[i])*(ind+1)
                        for i in range(color_len)]
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+            drawText(font , (-2,-1,0),"Alpha",(255,0,0,0))
+            drawText(font , (-2,-1.25,0),"Beta",(0,255,0,0))
+            drawText(font , (-2,-1.5,0),"Theta",(0,0,255,0))
+            drawText(font , (-2,1.3,0),"Time :"+str(m)+" sec",(0,0,255,0))
+            drawText(font , (-2,1.6,0),"Speed :"+str(speed),(0,0,255,0))
             if show_head:
                 self.Head()
             self.EEGCap(col)
             self.RenderPoints()
-            self.drawText(font,(10,100),'Alpha Channel',(255,0,0,0))
-            self.drawText(font,(10,200),'Beta Channel',(0,255,0,0))
-            self.drawText(font,(10,300),'Theta Channel',(0,0,255,0))
             pygame.display.flip()
-            pygame.time.wait(10)
+            pygame.time.wait(18)
