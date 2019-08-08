@@ -142,7 +142,7 @@ class StartPage(tk.Frame):
     
     def getDetails(self,filename):
         print(filename)
-        filename_modified = "data/Cheat/"+filename[-9:-4]+"/ptFile.dat"
+        filename_modified = "data/Cheats/"+filename[-9:-4]+"/ptFile.dat"
         print(filename_modified)
         patient = open(filename_modified,'rb')
         patient.read(25)

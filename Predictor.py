@@ -36,26 +36,26 @@ class Predictor:
             vals = vals[freqs]
             scale = len(freqs)//256
             a=b=d=t=0
+            # calculate the power of the channels differentiated by the frequency
             th = sum([i**2 for i in vals[4*scale:8*scale]])
             d = sum([i**2 for i in vals[1*scale:4*scale]])
             a = sum([i**2 for i in vals[8*scale:13*scale]])
             b = sum([i**2 for i in vals[13*scale:40*scale]])
             t = sum([i**2 for i in vals])-sum([i**2 for i in vals[49*scale:51*scale]]) - sum([i**2 for i in vals[:scale]])
-
+            # append them to lists
             alpha.append(a)
             beta.append(b)
             theta.append(d)
             total.append(t)
-
+            # Calculate more mumbo jumbo i.e. rhythm and noise
             rhythm=a+b+d+th
             noise=t-rhythm
+            #  finally prediction and classification
             result = svcclassifier.predict([[rhythm,noise]])
             if result==0:
-                # print('Channel C'+str(j+1)+' is bad.')
                 self.result_data.append('bad')
                 self.bad.append(j)
             else:
-                # print('Channel C'+str(j+1)+' is good.')
                 self.result_data.append('good')
         at = sum(total)/len(total)
         self.powers.append(((sum(alpha)/len(alpha))/at)*100)

@@ -108,9 +108,9 @@ class Results(tk.Frame):
         # self.totalTimeValue['text'] = str(obj.eegLength)+'s'
         # print(obj.eegLength)
 
-        self.__fb0_8['text'] = str(obj.powers[0].__round__(2))
-        self.__fb8_15['text'] = str(obj.powers[1].__round__(2))
-        self.__fb15_60['text'] = str(obj.powers[2].__round__(2))
+        self.__fb0_8['text'] = str(obj.powers[2].__round__(2))
+        self.__fb8_15['text'] = str(obj.powers[0].__round__(2))
+        self.__fb15_60['text'] = str(obj.powers[1].__round__(2))
         self.__fgt60['text'] = str(obj.powers[3].__round__(2))
     
     def gotoStartPage(self):

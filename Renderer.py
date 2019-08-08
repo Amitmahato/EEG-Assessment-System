@@ -14,7 +14,7 @@ class Renderer:
         self.edges = headcap.index
 
         # bad channels list 0-15
-        self.bader = badch
+        self.bad_channels = badch
 
         #load head 
         head = Objloader()
@@ -31,7 +31,6 @@ class Renderer:
             for vertex in edge:
                 x=vertex%15
                 glColor3fv(col[3*x:3*(x+1)])
-                
                 glVertex3fv(self.vertices[vertex])   
         glEnd()
 
@@ -43,16 +42,17 @@ class Renderer:
                 glVertex3fv(self.vertices2[vertex])   
         glEnd()
 
-    def bad(self):
+    def RenderPoints(self):
         glPointSize(14)
         glBegin(GL_POINTS)
         for i in range(len(self.vertices)):
-            glColor3fv([0.1,0.7,0.1])
-            glVertex3fv(self.vertices[i])
+            if i not in self.bad_channels:
+                glColor3fv([0.1,0.7,0.1])
+                glVertex3fv(self.vertices[i])
         glEnd()
         glPointSize(20)
         glBegin(GL_POINTS)
-        for vertex in self.bader:
+        for vertex in self.bad_channels:
             glColor3fv([1.0,0.1,0.2])
             glVertex3fv([i*1.01 for i in self.vertices[vertex]])
         glEnd()
@@ -103,7 +103,6 @@ class Renderer:
                     prev = now
                     now = pygame.mouse.get_pos()
                     glRotated(1,0,(now[0]-prev[0])/8,0)
-                    # glRotated(1,(now[1]-prev[1])/speed,(now[0]-prev[0])/speed,0)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:
                         glTranslatef(0,0,1.0)
@@ -116,14 +115,14 @@ class Renderer:
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:            
                         drag_lock = False
+            
+            if autorotate:
+                glRotatef(0.4, 0, 0.4, 0)
             if not pause:
-                if autorotate:
-                    glRotatef(0.4, 0, 0.4, 0)
                 ind += 1  
                 if ind % speed == 0 and m < limit - 1:
                     ind = 0
                     m = (m+1)%limit
-                    # print(m)
                     for i in range(color_len):
                         diff.append((self.color[(m+1)%limit][i] - self.color[m][i]) / speed)
                 col = [self.color[m][i] + (diff[i])*(ind+1) for i in range(color_len)]
@@ -132,6 +131,6 @@ class Renderer:
             if self.showhead:
                 self.Head()
             self.EEGCap(col)
-            self.bad()
+            self.RenderPoints()
             pygame.display.flip()
             pygame.time.wait(10)
