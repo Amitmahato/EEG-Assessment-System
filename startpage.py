@@ -64,7 +64,7 @@ class StartPage(tk.Frame):
         #before selection of any file
         self.selectFrame = tk.Frame(self.detailFrame,bg='white smoke',width=550,height=450)
         tk.Label(self.selectFrame,bg='white smoke',text='Welcome to EEG Assessment Application',font=("Arial","16","bold")).place(relx=0.45,rely=0.3,anchor="center")
-        tk.Label(self.selectFrame,bg='white smoke',text='<----- Please select a file for information & analysis',font=("Arial","12")).place(relx=0.425,rely=0.5,anchor="center")
+        tk.Label(self.selectFrame,bg='white smoke',text='Double click to select a file for basic information & analysis',font=("Arial","12")).place(relx=0.45,rely=0.5,anchor="center")
         self.selectFrame.grid(row=0,column=0)
 
         #after selection of a file
