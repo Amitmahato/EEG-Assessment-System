@@ -147,7 +147,7 @@ class Renderer:
             drawText(font , (-2,-1.25,0),"Beta",(0,255,0,0))
             drawText(font , (-2,-1.5,0),"Theta",(0,0,255,0))
             drawText(font , (-2,1.3,0),"Time :"+str(m)+" sec",(0,0,255,0))
-            drawText(font , (-2,1.6,0),"Speed :"+str(speed),(0,0,255,0))
+            drawText(font , (-2,1.6,0),"Interpolated frames :"+str(speed) + " Frames per second",(0,0,255,0))
             if show_head:
                 self.Head()
             self.EEGCap(col)
