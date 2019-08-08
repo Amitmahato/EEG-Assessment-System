@@ -4,7 +4,6 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 from Objloader import Objloader
-from Textwriter import  drawText
 
 
 class Renderer:
@@ -59,7 +58,13 @@ class Renderer:
             glVertex3fv([i*1.01 for i in self.vertices[vertex]])
         glEnd()
 
-
+        
+    def drawText(self, font, position, textString, color):
+        textSurface = font.render(textString, True, color, (0, 0, 0, 255))
+        textData = pygame.image.tostring(textSurface, "RGBA", True)
+        glRasterPos3d(*position)
+        glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
+    
     def render(self):
         limit = len(self.color)
         # flags
@@ -82,7 +87,7 @@ class Renderer:
         glTranslatef(0.0, 0.0, -5)
         glRotatef(0, 0, 0, 0)
         glEnable(GL_DEPTH_TEST)
-        speed = 50
+        speed = 30
         color_len = len(self.color[0])
         diff = []
         for i in range(color_len):
@@ -143,11 +148,11 @@ class Renderer:
                        for i in range(color_len)]
 
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-            drawText(font , (-2,-1,0),"Alpha",(255,0,0,0))
-            drawText(font , (-2,-1.25,0),"Beta",(0,255,0,0))
-            drawText(font , (-2,-1.5,0),"Theta",(0,0,255,0))
-            drawText(font , (-2,1.3,0),"Time :"+str(m)+" sec",(0,0,255,0))
-            drawText(font , (-2,1.6,0),"Interpolated frames :"+str(speed) + " Frames per second",(0,0,255,0))
+            self.drawText(font , (-2,-1,0),"Alpha",(255,0,0,0))
+            self.drawText(font , (-2,-1.25,0),"Beta",(0,255,0,0))
+            self.drawText(font , (-2,-1.5,0),"Theta",(0,0,255,0))
+            self.drawText(font , (-2,1.3,0),"Time :"+str(m)+" sec",(0,0,255,0))
+            self.drawText(font , (-2,1.6,0),"Interpolated frames :"+str(speed) + " Frames per second",(0,0,255,0))
             if show_head:
                 self.Head()
             self.EEGCap(col)
