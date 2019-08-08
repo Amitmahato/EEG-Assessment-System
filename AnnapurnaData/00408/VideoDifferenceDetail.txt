@@ -1,6 +1,0 @@
-ActualVideoTime/TotalVideoTime 0
-TotalEEGTime 0
-TotalVideoFilesTime 0
-Abs(TotalEEGTime - TotalVideoTime) 0
-Abs(TotalEEGTime - TotalVideoFilesTime) 0
-VideoDifference 0

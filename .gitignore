@@ -1,6 +1,3 @@
-/PyOpenglEnv/*
-/PyOpenglEnv/Include/*
-/PyOpenglEnv/Lib/*
-/PyOpenglEnv/Scripts/*
-/PyOpenglEnv/tcl/*
+/EEGTools/*
+/__pycache__/*
 
