@@ -3,4 +3,5 @@
 /PyOpenglEnv/Lib/*
 /PyOpenglEnv/Scripts/*
 /PyOpenglEnv/tcl/*
-
+/AnnapurnaData/*
+*.edf
