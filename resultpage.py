@@ -59,7 +59,7 @@ class Results(tk.Frame):
         tk.Label(frequencyFrame,font=self.customFont,text="Frequency Between").grid(row=1,column=0)
         tk.Label(frequencyFrame,font=self.customFont,text="Frequency Between").grid(row=2,column=0)
         tk.Label(frequencyFrame,font=self.customFont,text="Frequency Between").grid(row=3,column=0)
-        tk.Label(frequencyFrame,font=self.customFont,text="Frequency Between").grid(row=4,column=0)
+        tk.Label(frequencyFrame,font=self.customFont,text="Frequency").grid(row=4,column=0)
 
         
         tk.Label(frequencyFrame,font=self.customFont,text="0  to 8     ").grid(row=1,column=1)

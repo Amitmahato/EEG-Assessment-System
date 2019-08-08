@@ -1,4 +1,4 @@
-import pygame
+import pygame as pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -23,10 +23,9 @@ class Renderer:
 
 
         # color data
-        self.color = color1
-        self.showhead = False    
+        self.color = color1   
 
-    def Cube(self,col):
+    def EEGCap(self,col):
         glBegin(GL_TRIANGLES)
         for edge in self.edges:
             for vertex in edge:
@@ -60,26 +59,27 @@ class Renderer:
 
     def render(self):
         limit = len(self.color)
+        # flags
+        self.showhead = False
+        drag_lock = False
+        pause = False
+        autorotate = False 
+        # counters
         m = 0
         ind = 0
         pygame.init()
         display = (800,600)
         pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
-        p_tr = False
-        rectangle_draging = False
-        pause = False
-        autorotate = False
         gluPerspective(45 , 4/3 , 0.1 ,50.0)
         now = []
         glTranslatef(0.0,0.0,-5)
         glRotatef(0,0,0,0)
         glEnable(GL_DEPTH_TEST)
-        x=50
+        speed=50
         color_len = len(self.color[0])
-        speed = 10
         diff = []
         for i in range(color_len):
-            diff.append((self.color[(m+1)%limit][i] - self.color[m][i]) / x)
+            diff.append((self.color[(m+1)%limit][i] - self.color[m][i]) / speed)
 
         while True:
 
@@ -91,49 +91,47 @@ class Renderer:
                     if pygame.key.get_focused() and pygame.key.get_pressed()[K_SPACE]:
                         pause = not pause
                     if pygame.key.get_focused() and pygame.key.get_pressed()[K_GREATER]:
-                        speed +=5
-                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_LESS]:
                         if speed > 5:
                             speed -=5
-                if rectangle_draging:
+                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_LESS]:
+                        speed +=5
+                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_n]:
+                        self.showhead = not self.showhead
+                    if pygame.key.get_focused() and pygame.key.get_pressed()[K_b]:
+                        autorotate = not autorotate 
+                if drag_lock:
                     prev = now
                     now = pygame.mouse.get_pos()
-                    glRotated(1,(now[1]-prev[1])/speed,(now[0]-prev[0])/speed,0)
+                    glRotated(1,0,(now[0]-prev[0])/8,0)
+                    # glRotated(1,(now[1]-prev[1])/speed,(now[0]-prev[0])/speed,0)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:
                         glTranslatef(0,0,1.0)
                     if event.button == 5:
                         glTranslatef(0,0,-1.0)
                     if event.button == 1:            
-                        rectangle_draging = True
+                        drag_lock = True
                         now = pygame.mouse.get_pos()
 
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:            
-                        rectangle_draging = False
-
-                # if rectangle_draging:
-                #     motion = pygame.mouse.get_rel()
-                #     print(motion,motion[0],motion[1])
-                #     glRotatef(1,motion[1],motion[0] ,0)
-
-                # glClearColor(1.0, 1.0, 1.0, 1.0)
+                        drag_lock = False
             if not pause:
                 if autorotate:
                     glRotatef(0.4, 0, 0.4, 0)
                 ind += 1  
-                if ind % x == 0 and m < limit - 1:
+                if ind % speed == 0 and m < limit - 1:
                     ind = 0
                     m = (m+1)%limit
                     # print(m)
                     for i in range(color_len):
-                        diff.append((self.color[(m+1)%limit][i] - self.color[m][i]) / x)
+                        diff.append((self.color[(m+1)%limit][i] - self.color[m][i]) / speed)
                 col = [self.color[m][i] + (diff[i])*(ind+1) for i in range(color_len)]
 
             glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
             if self.showhead:
                 self.Head()
-            self.Cube(col)
+            self.EEGCap(col)
             self.bad()
             pygame.display.flip()
             pygame.time.wait(10)

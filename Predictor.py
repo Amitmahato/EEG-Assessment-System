@@ -62,7 +62,7 @@ class Predictor:
         self.powers.append(((sum(beta)/len(beta))/at)*100)
         self.powers.append(((sum(theta)/len(theta))/at)*100)
         f = self.powers
-        self.powers.append(at-sum(f))
+        self.powers.append(100-sum(f))
         self.filter_bad()
 
     def get_result(self):

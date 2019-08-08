@@ -64,7 +64,6 @@ class MainApp(tk.Tk):
         self.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
 if __name__ == "__main__":
-    
     f = open("firstTime.txt",mode="r")
     lines = f.read().splitlines()
     isFirstTime = int(lines[0].split("=")[1])
