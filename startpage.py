@@ -123,7 +123,7 @@ class StartPage(tk.Frame):
         item = self.fileStructure.selection()[0]
         value = self.fileStructure.item(item)['values']
         self.selectedFilePath = ''.join(value)
-        ptFilePath = '/'.join(self.selectedFilePath.split('/')[:-1])+'/ptFile.dat'
+        ptFilePath = self.selectedFilePath.split('/')[-1]
         try:
             p_info = self.getDetails(ptFilePath)
             self.p_name['text'] = p_info[1]
@@ -141,7 +141,10 @@ class StartPage(tk.Frame):
         self.infoFrame.grid(row=0,column=0)
     
     def getDetails(self,filename):
-        patient = open(filename,'rb')
+        print(filename)
+        filename_modified = "data/Cheats/"+filename[-9:-4]+"/ptFile.dat"
+        print(filename_modified)
+        patient = open(filename_modified,'rb')
         patient.read(25)
         pt_details = []
         s = patient.read(1)

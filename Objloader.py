@@ -1,5 +1,3 @@
-import numpy as np
-from pprint import pprint
 class Objloader:
     def __init__(self):
         self.vertices = []

@@ -7,26 +7,27 @@ import mne
 import pickle
 class Predictor:
     def __init__(self,filePath):
+        # trained model
         self.filename = './data/trained_model.sav'
-        self.raw_data = []
-        self.result_data=[]
-        self.bad = []
-        self.header = []
-        self.powers = []
-        self.file = filePath
+        self.raw_data = [] #raw eeg data
+        self.result_data=[] #result data
+        self.bad = [] #bad channel data
+        self.header = [] #header information
+        self.powers = [] # power of different waves
+        self.file = filePath # filepath
 
     def assess_func(self):
-        edf = mne.io.read_raw_edf(self.file)
-        self.raw_data = edf.get_data().T
-        self.header = edf.ch_names
-        svcclassifier = pickle.load(open(self.filename, 'rb'))
+        edf = mne.io.read_raw_edf(self.file) #read eeg file
+        self.raw_data = edf.get_data().T # raw eeg voltage
+        self.header = edf.ch_names # channel names
+        svcclassifier = pickle.load(open(self.filename, 'rb')) # load svm model data
     
         alpha = []
         beta = []
         theta = []
         total = []
 
-        for j in range(32):
+        for j in range(len(self.header)):
             fp2 = [self.raw_data[i][j] for i in range(len(self.raw_data))]
             freqs = fftfreq(len(fp2))
             freqs = freqs>0
@@ -35,33 +36,33 @@ class Predictor:
             vals = vals[freqs]
             scale = len(freqs)//256
             a=b=d=t=0
+            # calculate the power of the channels differentiated by the frequency
             th = sum([i**2 for i in vals[4*scale:8*scale]])
             d = sum([i**2 for i in vals[1*scale:4*scale]])
             a = sum([i**2 for i in vals[8*scale:13*scale]])
             b = sum([i**2 for i in vals[13*scale:40*scale]])
             t = sum([i**2 for i in vals])-sum([i**2 for i in vals[49*scale:51*scale]]) - sum([i**2 for i in vals[:scale]])
-
+            # append them to lists
             alpha.append(a)
             beta.append(b)
             theta.append(d)
             total.append(t)
-
+            # Calculate more mumbo jumbo i.e. rhythm and noise
             rhythm=a+b+d+th
             noise=t-rhythm
+            #  finally prediction and classification
             result = svcclassifier.predict([[rhythm,noise]])
             if result==0:
-                # print('Channel C'+str(j+1)+' is bad.')
                 self.result_data.append('bad')
                 self.bad.append(j)
             else:
-                # print('Channel C'+str(j+1)+' is good.')
                 self.result_data.append('good')
-        
-        self.powers.append(sum(alpha)/len(alpha))
-        self.powers.append(sum(beta)/len(beta))
-        self.powers.append(sum(theta)/len(theta))
-        self.powers.append(sum(total)/len(total))
-
+        at = sum(total)/len(total)
+        self.powers.append(((sum(alpha)/len(alpha))/at)*100)
+        self.powers.append(((sum(beta)/len(beta))/at)*100)
+        self.powers.append(((sum(theta)/len(theta))/at)*100)
+        f = self.powers
+        self.powers.append(100-sum(f))
         self.filter_bad()
 
     def get_result(self):
@@ -74,16 +75,9 @@ class Predictor:
     def filter_bad(self):
         temp = self.bad
         new = []
+        # change bad to renderable
         x = [1,2,4,5,7,8,10,11,13,14,16,17,19,20,21,23]
         for i in temp:
             if i in x:
                 new.append(x.index(i))
         self.bad = new
-
-    # ['PG1', 'FP1', 'FP2', 'PG2', 'F7', 'F3', 'FZ', 'F4', 'F8', 'A1',10 'T3', 'C3', 'CZ', 'C4',13 'T4', 'A2', 'T5',
-    #        'P3', 'PZ', 'P4', 'T6', 'O1', 'OZ', 'O2', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'EX1', 'EX2', 'EX3']
-
-    # loaded_model = pickle.load(open(self.filename, 'rb'))
-    # result = loaded_model.score(X_test, y_test)
-    # print(result)
-    # assess_func(edf)
