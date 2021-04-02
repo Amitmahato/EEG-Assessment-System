@@ -45,7 +45,7 @@ class Predictor:
             # append them to lists
             alpha.append(a)
             beta.append(b)
-            theta.append(d)
+            theta.append(d+th)
             total.append(t)
             # Calculate more mumbo jumbo i.e. rhythm and noise
             rhythm=a+b+d+th
